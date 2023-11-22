@@ -1,7 +1,7 @@
 # Team-36
  Team 36's group project GitHub repository for MGT 6203 (Canvas) Fall of 2023 semester.
 
-## Introduction
+## Background
 The purpose of this project is to build a recession predictor by way of predicting GDP using both traditional and modern economic variables. The yield curve has been the de-facto indicator for looming economic troubles, and economists are signaling that it is not working as well in modern times. We built a Vector Auto-Regressive Model after testing the effectiveness of a wide spread of variables in predicting GDP.
 
 ## Data
@@ -16,7 +16,7 @@ The data for each variable had their own source. The Real GDP, the Producer Pric
 - **Market Beta**: MCAP_WAB20231031123947.csv
 - **M-Score**: final_M.csv
 
-In the end, two "final" data sets were created. The file merged_data20231031125447.csv holds data tthat runs from 1976 to 2023. Our M-Score and market beta data only goes up to 2013, so we created a truncated version,  merged_data_mscore_wab20231031125447.csv, so we could explore all the variables at our disposal.
+In the end, two "final" data sets were created. The file merged_data20231031125447.csv holds data that runs from 1976 to 2023. Our M-Score and market beta data only goes up to 2013, so we created a truncated version,  merged_data_mscore_wab20231031125447.csv, so we could explore all the variables at our disposal.
  
 
 ## Code
@@ -35,7 +35,7 @@ The final data set was created in final_merge.ipynb. All other notebooks have mi
 
 ## Model
 The creation and testing of our final model can be found in the model1.ipynb notebook. The steps take were:
-1. Loading in the 2 data sets.
+1. Loading in the two data sets.
 2. Creating a series of visualzations for each variable type.
 3. Running the Augmented Dickey-Fuller Test to check if our variables were stationary. VAR models require staionary data, which we achieved after differencing the data once.
 4. Running Granger's Causality Test on the differenced data to see which variables lag GDP (aka which variables could cause GDP). The unpredictability of the 2020 Recession indicated that the data set that runs into 2023 has few variables that lag GDP. Therefore we decided to continue on with the data set that runs until 2013, since it has more total variables anyways, with 16 total being selected.
@@ -46,7 +46,7 @@ The creation and testing of our final model can be found in the model1.ipynb not
 9. A VIF test revealed the presence of multi-collinearity in the variables. A Durbin-Watson test revealed that there are serially correlated residuals with some variables after creating the initial model. Analyzing the results of both tests together revealed which variables to keep for our next model.
 10. Another model (model2) was created with 7 remaining variables, with the resulting forecast being a lot closer to the test GDP values.
 11. Durbin Watson and VIF tests revealed a smaller chance of correlated variables.
-12. Model evaluation is done to compare the models.
-13. Final model is built with a smaller train set to see which recessions we can predict.
+12. Model evaluation was done to compare the models.
+13. Final model was built with a smaller train set to see which recessions we can predict.
 
 
