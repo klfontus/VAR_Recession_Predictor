@@ -2,7 +2,7 @@
  Team 36's group project GitHub repository for MGT 6203 (Canvas) Fall of 2023 semester.
 
 ## Background
-The purpose of this project is to build a recession predictor by way of predicting GDP using both traditional and modern economic variables. The yield curve has been the de-facto indicator for looming economic troubles, and economists are signaling that it is not working as well in modern times. We built a Vector Auto-Regressive Model after testing the effectiveness of a wide spread of variables in predicting GDP.
+The purpose of this project is to build a recession predictor by way of predicting GDP using both traditional and modern economic variables. The yield curve has been the de-facto indicator for looming economic troubles, and economists are signaling that it is not working as well in modern times. We built a Vector Auto-Regressive Model after testing the effectiveness of a wide spread of historical variables in predicting GDP.
 
 ## Data
 The data for each variable had their own source. The Real GDP, the Producer Price Index, and Yield Curve data were easily obtained from the Federal Reserve Bank of St. Louis' website. The S&P 500 and Dow Jones Industrial Average historical data was found through the yfinance package in Python. Market capitalization records, market betas, and the information needed to calculate M-Score were found in databases in  Wharton Research Data Services. There are csv files in the Data folder that house the raw data for each of these variables. The following are the csv files that house the transformed variables whose end of quarter values make up our final data set:
@@ -34,7 +34,7 @@ There are Python Notebooks in the Code folder that hold the transformations from
 The final data set was created in final_merge.ipynb. All other notebooks have miscellaneous tests and explorations of the data.
 
 ## Model
-The creation and testing of our final model can be found in the model1.ipynb notebook. The steps take were:
+The creation and testing of our final model can be found in the model1.ipynb notebook. The steps taken were:
 1. Loading in the two data sets.
 2. Creating a series of visualzations for each variable type.
 3. Running the Augmented Dickey-Fuller Test to check if our variables were stationary. VAR models require staionary data, which we achieved after differencing the data once.
