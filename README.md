@@ -4,8 +4,34 @@
 ## Background
 The purpose of this project is to build a recession predictor by way of predicting GDP using both traditional and modern economic variables. The yield curve has been the de-facto indicator for looming economic troubles, and economists are signaling that it is not working as well in modern times. We built a Vector Auto-Regressive Model after testing the effectiveness of a wide spread of historical variables in predicting GDP.
 
-## Data
-The data for each variable had their own source. The Real GDP, the Producer Price Index, and Yield Curve data were easily obtained from the Federal Reserve Bank of St. Louis' website. The S&P 500 and Dow Jones Industrial Average historical data was found through the yfinance package in Python. Market capitalization records, market betas, and the information needed to calculate M-Score were found in databases in  Wharton Research Data Services. There are csv files in the Data folder that house the raw data for each of these variables. The following are the csv files that house the transformed variables whose end of quarter values make up our final data set:
+## Data Sources
+The features used in our VAR models are time series data from a variety of sources:
+- **Macro Economic Variables**: Real GDP (our "response" variable), Producer Price Index, and Yield Curve are all traditional indicators of recessions. Data for these 3 features was downloaded from the [Federal Reserve Bank of St. Louis' website](https://fred.stlouisfed.org/) 
+- **Stock Market Returns**: Market returns are also a classic variable used to forecast recessions. We used S&P 500 and Dow Jones Industrial Average historical data in our models that came from Bloomberg databases queried through the [Bloomberg Anywhere App](https://bba.bloomberg.net/) 
+- **Financial Statements**: We used Wharton Research Data Services to query databases containing historical financial data from thousands of publicly traded companies. Data on [beta values](https://wrds-www.wharton.upenn.edu/login/?next=/data-dictionary/contrib_general/), and [market capitalization](https://wrds-www.wharton.upenn.edu/login/?next=/data-dictionary/crsp_q_stock/) was used to engineer a "weighted average beta" feature examined in our models, and [Compustat Snapshot data](https://wrds-www.wharton.upenn.edu/login/?next=/data-dictionary/compsamp_snapshot/wrds_csq_unrestated/) was used to calculate Beneish M-Score (a more modern variable which has attracted recent interest by economists looking for better methods to forecast recessions).
+
+## What's In The Data Folder? 
+The 'Data' folder in this repository contains 2 types of csv data files:
+1) Raw csv data for features extracted from the sources listed above.
+2) Processed csv data with added features that has been explored and cleaned using a series of jupyter notebooks (described below). 
+3) **merged_data20231031125447.csv** : (1976 Q3 to 2023 Q1) Contains most features in quarterly date format and runs all the way up to the first quarter of 2023. But it does not include m-score or weighted average beta.
+4) **merged_data_mscore_wab20231031125447.csv** : (1977 Q2 2013 Q2) Contains all data in quarterly date format including M-score and weighted average beta. This is the dataset used to make all of our final forecasts.
+
+
+
+## Jupyter Notebooks For Cleaning, Exploring, And Feature Engineering.
+There are Python Notebooks in the Code folder that hold the transformations from the raw data to the clean, quarterly data used to build our final model. Quarterly M-Score per company had to be calculated from various indices from an extremely messy data base, after which quarterly arithmetic averages and averages weighted by market capitalization were calculated. Market betas were averaged over quarters and their weighted averages were also found. The PPI, Yield Curve, S&P 500 returns, Dow Jones returns, average betas, and weighted average betas also had their trend, velocity, and acceleration values calculated by quarter to see if they provide any insight on changes in GDP.
+
+- **GDP**: GDP_PPI_YC_merging.ipynb
+- **PPI**: GDP_PPI_YC_merging.ipynb
+- **Yield Curve**: GDP_PPI_YC_merging.ipynb
+- **S&P 500 returns**: clean_index_data.ipynb
+- **Dow Jones**:  clean_INDU_data.ipynb
+- **Market Capitalization**: weighted_average_beta_explorer.ipynb
+- **Market Beta**: weighted_average_beta_explorer.ipynb
+- **M-Score**: m_score.ipynb,  Weighted_M_Score.ipynb, M_explore.ipynb
+## 
+There are csv files in the Data folder that house the raw data for each of these variables. The following are the csv files that house the transformed variables whose end of quarter values make up our final data set:
 
 - **GDP**: GDP_PPI_YC_20231025203618.csv
 - **PPI**: GDP_PPI_YC_20231025203618.csv
@@ -19,17 +45,7 @@ The data for each variable had their own source. The Real GDP, the Producer Pric
 In the end, two "final" data sets were created. The file merged_data20231031125447.csv holds data that runs from 1976 to 2023. Our M-Score and market beta data only goes up to 2013, so we created a truncated version,  merged_data_mscore_wab20231031125447.csv, so we could explore all the variables at our disposal.
  
 
-## Code
-There are Python Notebooks in the Code folder that hold the transformations from the raw data to the clean, quarterly data used to build our final model. Quarterly M-Score per company had to be calculated from various indices from an extremely messy data base, after which quarterly arithmetic averages and averages weighted by market capitalization were calculated. Market betas were averaged over quarters and their weighted averages were also found. The PPI, Yield Curve, S&P 500 returns, Dow Jones returns, average betas, and weighted average betas also had their trend, velocity, and acceleration values calculated by quarter to see if they provide any insight on changes in GDP.
 
-- **GDP**: GDP_PPI_YC_merging.ipynb
-- **PPI**: GDP_PPI_YC_merging.ipynb
-- **Yield Curve**: GDP_PPI_YC_merging.ipynb
-- **S&P 500 returns**: clean_index_data.ipynb
-- **Dow Jones**:  clean_INDU_data.ipynb
-- **Market Capitalization**: weighted_average_beta_explorer.ipynb
-- **Market Beta**: weighted_average_beta_explorer.ipynb
-- **M-Score**: m_score.ipynb,  Weighted_M_Score.ipynb, M_explore.ipynb
 
 The final data set was created in final_merge.ipynb. All other notebooks have miscellaneous tests and explorations of the data.
 
