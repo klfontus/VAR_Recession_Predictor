@@ -12,52 +12,44 @@ The features used in our VAR models are time series data from a variety of sourc
 
 ## What's In The Data Folder? 
 The 'Data' folder in this repository contains 2 types of csv data files:
-1) Raw csv data for features extracted from the sources listed above.
-2) Processed csv data with added features that has been explored and cleaned using a series of jupyter notebooks (described below). 
-3) **merged_data20231031125447.csv** : (1976 Q3 to 2023 Q1) Contains most features in quarterly date format and runs all the way up to the first quarter of 2023. But it does not include m-score or weighted average beta.
-4) **merged_data_mscore_wab20231031125447.csv** : (1977 Q2 2013 Q2) Contains all data in quarterly date format including M-score and weighted average beta. This is the dataset used to make all of our final forecasts.
+Raw csv data for features extracted from the sources listed above, and
+Processed csv data with added features that has been explored and cleaned using a series of jupyter notebooks. Many of the processed data sets include new features called 'trend' which captures the moving avearge trend of the raw time series data assuming quarterly seasonality. There are also 'velocity' and 'acceleration' features which are the 1st and 2nd derivative of their 'trend' feature respectively.
 
+The following are the csv files that house the transformed variables whose end of quarter values make up our final data set:
 
-
-## Jupyter Notebooks For Cleaning, Exploring, And Feature Engineering.
-There are Python Notebooks in the Code folder that hold the transformations from the raw data to the clean, quarterly data used to build our final model. Quarterly M-Score per company had to be calculated from various indices from an extremely messy data base, after which quarterly arithmetic averages and averages weighted by market capitalization were calculated. Market betas were averaged over quarters and their weighted averages were also found. The PPI, Yield Curve, S&P 500 returns, Dow Jones returns, average betas, and weighted average betas also had their trend, velocity, and acceleration values calculated by quarter to see if they provide any insight on changes in GDP.
-
-- **GDP**: GDP_PPI_YC_merging.ipynb
-- **PPI**: GDP_PPI_YC_merging.ipynb
-- **Yield Curve**: GDP_PPI_YC_merging.ipynb
-- **S&P 500 returns**: clean_index_data.ipynb
-- **Dow Jones**:  clean_INDU_data.ipynb
-- **Market Capitalization**: weighted_average_beta_explorer.ipynb
-- **Market Beta**: weighted_average_beta_explorer.ipynb
-- **M-Score**: m_score.ipynb,  Weighted_M_Score.ipynb, M_explore.ipynb
-## 
-There are csv files in the Data folder that house the raw data for each of these variables. The following are the csv files that house the transformed variables whose end of quarter values make up our final data set:
-
-- **GDP**: GDP_PPI_YC_20231025203618.csv
-- **PPI**: GDP_PPI_YC_20231025203618.csv
-- **Yield Curve**: GDP_PPI_YC_20231025203618.csv
+- **GDP, PPI, and Yield Curve**: GDP_PPI_YC_20231025203618.csv
 - **S&P 500 returns**: clean_index_data202310251597.csv
-- **Dow Jones**:  clean_INDU_data202310308286.csv
-- **Market Capitalization**: MCAP_WAB20231031123947.csv
-- **Market Beta**: MCAP_WAB20231031123947.csv
+- **Dow Jones returns**:  clean_INDU_data202310308286.csv
+- **Weighted Average Beta and Market Capitalization**: MCAP_WAB20231031123947.csv
 - **M-Score**: final_M.csv
 
-In the end, two "final" data sets were created. The file merged_data20231031125447.csv holds data that runs from 1976 to 2023. Our M-Score and market beta data only goes up to 2013, so we created a truncated version,  merged_data_mscore_wab20231031125447.csv, so we could explore all the variables at our disposal.
- 
+We ended up with 2 versions of our final data set:
+
+- **merged_data20231031125447.csv** : (1976 Q3 to 2023 Q1) Contains most features in quarterly date format and runs all the way up to the first quarter of 2023. But it does not include m-score or weighted average beta.
+- **merged_data_mscore_wab20231031125447.csv** : (1977 Q2 2013 Q2) Contains all data in quarterly date format including M-score and weighted average beta. This is the dataset used to make all of our final forecasts.
 
 
+## Jupyter Notebooks For Cleaning And Feature Engineering.
+There are jupyter notebooks in the 'Code' folder that we used to transform raw time series data into the clean, quarterly data used to build our final models: 
 
-The final data set was created in final_merge.ipynb. All other notebooks have miscellaneous tests and explorations of the data.
+- **GDP, PPI, and Yield Curve**: GDP_PPI_YC_merging.ipynb
+- **S&P 500 returns**: clean_index_data.ipynb
+- **Dow Jones returns**:  clean_INDU_data.ipynb
+- **Weighted average beta and market cap**: weighted_average_beta_explorer.ipynb
+- **M-Score**: m_score.ipynb,  Weighted_M_Score.ipynb, M_explore.ipynb
 
-## Model
-The creation and testing of our final model can be found in the model1.ipynb notebook. The steps taken were:
-1. Loading in the two data sets.
-2. Creating a series of visualzations for each variable type.
+Quarterly M-Score per company had to be calculated from various indices from an extremely messy data base, after which quarterly arithmetic averages and averages weighted by market capitalization were calculated. Average beta values for thousands of companies were also weighted by market capitalization. PPI, Yield Curve, S&P 500 returns, Dow Jones returns, average betas, and weighted average betas also had their trend, velocity, and acceleration values calculated by quarter to see if these new features provide any insight on changes in GDP.
+
+## Model Building Process.
+The creation and testing of our first set of VAR models can be found in the model1.ipynb notebook. The following steps were taken to bulid model1:
+1. Importing the 2 versions of our final datasets (**merged_data20231031125447.csv** and 
+**merged_data_mscore_wab20231031125447.csv**) as pandas dataframes.
+2. Creating a series of plots to check for errors in previous cleaning and feature engineering.
 3. Running the Augmented Dickey-Fuller Test to check if our variables were stationary. VAR models require staionary data, which we achieved after differencing the data once.
-4. Running Granger's Causality Test on the differenced data to see which variables lag GDP (aka which variables could cause GDP). The unpredictability of the 2020 Recession indicated that the data set that runs into 2023 has few variables that lag GDP. Therefore we decided to continue on with the data set that runs until 2013, since it has more total variables anyways, with 16 total being selected.
-5. Finding the optimal order to build our VAR model. Models with order 1-12 were built, with order=3 having the AIC value with the first local minima.
+4. Running Granger's Causality Test on the differenced data to see which variables 'lag' GDP (which variables have 'predictive causality' on GDP). We found that data set **merged_data20231031125447.csv**, which goes to 2023 and includes the 2020 mini recession, has few variables that lag GDP. Therefore we decided to continue on with **merged_data_mscore_wab20231031125447.csv** which runs until 2013 and includes M-Score and Weighted average beta. Granger causality tests with this data set show 16 variables which lag GDP at a 95% confidence level. These 16 variables were all included in our first VAR model.
+5. Finding the optimal order to build our VAR model: Models with order 1-12 were built, with order=3 having the AIC value with the first local minima.
 6. Make a training split of the data, with it ending at the end of 2007, right before the beginning of the Great Recession in 2008. The rest of the data was used to test the model.
-7. Create the model (model1) with the differenced train data, then make a forecast with the test data. The latter is a multi-step process, where you make a forecast with the differenced data, and then it must be inverted and un-differenced. Then a visualization was used to compare the test data and the forecasted data. It shows that our results were not promising so we explored the variables some more.
+7. Creating the model (model1) with the differenced training data, then making a forecast with the test data. Forecasts are made using the differenced data but the results must be 'un-differenced' to create a final real forecast. Plots were used to visually compare test data with forecast data, and . It shows that our results were not promising so we explored the variables some more.
 8. We did a cointegration to test of our 16 differenced variables are cointegrated with GDP, with the null hypothesis being that there is a long running, statistically significant relationship between variables. All the tests were false, meaning we can proceed with the VAR model.
 9. A VIF test revealed the presence of multi-collinearity in the variables. A Durbin-Watson test revealed that there are serially correlated residuals with some variables after creating the initial model. Analyzing the results of both tests together revealed which variables to keep for our next model.
 10. Another model (model2) was created with 7 remaining variables, with the resulting forecast being a lot closer to the test GDP values.
