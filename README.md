@@ -41,20 +41,16 @@ There are jupyter notebooks in the 'Code' folder that we used to transform raw t
 Quarterly M-Score per company had to be calculated from various indices from an extremely messy data base, after which quarterly arithmetic averages and averages weighted by market capitalization were calculated. Average beta values for thousands of companies were also weighted by market capitalization. PPI, Yield Curve, S&P 500 returns, Dow Jones returns, average betas, and weighted average betas also had their trend, velocity, and acceleration values calculated by quarter to see if these new features provide any insight on changes in GDP.
 
 ## Model Building Process.
-The creation and testing of our first set of VAR models can be found in the model1.ipynb notebook. The following steps were taken to bulid model1:
-1. Importing the 2 versions of our final datasets (**merged_data20231031125447.csv** and 
-**merged_data_mscore_wab20231031125447.csv**) as pandas dataframes.
-2. Creating a series of plots to check for errors in previous cleaning and feature engineering.
+All of our VAR models can be found in the model1.ipynb notebook in the Code directory. These are the general steps we took to build our models:
+1. Importing the 2 versions of our final datasets as pandas dataframes: **merged_data20231031125447.csv** (up to 2023) and 
+**merged_data_mscore_wab20231031125447.csv** (up to 2013 and includes M-Score and Weighted Average Beta)
+2. Creating a series of plots to check for errors in previous cleaning and feature engineering steps.
 3. Running the Augmented Dickey-Fuller Test to check if our variables were stationary. VAR models require staionary data, which we achieved after differencing the data once.
-4. Running Granger's Causality Test on the differenced data to see which variables 'lag' GDP (which variables have 'predictive causality' on GDP). We found that data set **merged_data20231031125447.csv**, which goes to 2023 and includes the 2020 mini recession, has few variables that lag GDP. Therefore we decided to continue on with **merged_data_mscore_wab20231031125447.csv** which runs until 2013 and includes M-Score and Weighted average beta. Granger causality tests with this data set show 16 variables which lag GDP at a 95% confidence level. These 16 variables were all included in our first VAR model.
-5. Finding the optimal order to build our VAR model: Models with order 1-12 were built, with order=3 having the AIC value with the first local minima.
-6. Make a training split of the data, with it ending at the end of 2007, right before the beginning of the Great Recession in 2008. The rest of the data was used to test the model.
-7. Creating the model (model1) with the differenced training data, then making a forecast with the test data. Forecasts are made using the differenced data but the results must be 'un-differenced' to create a final real forecast. Plots were used to visually compare test data with forecast data, and . It shows that our results were not promising so we explored the variables some more.
-8. We did a cointegration to test of our 16 differenced variables are cointegrated with GDP, with the null hypothesis being that there is a long running, statistically significant relationship between variables. All the tests were false, meaning we can proceed with the VAR model.
-9. A VIF test revealed the presence of multi-collinearity in the variables. A Durbin-Watson test revealed that there are serially correlated residuals with some variables after creating the initial model. Analyzing the results of both tests together revealed which variables to keep for our next model.
-10. Another model (model2) was created with 7 remaining variables, with the resulting forecast being a lot closer to the test GDP values.
-11. Durbin Watson and VIF tests revealed a smaller chance of correlated variables.
-12. Model evaluation was done to compare the models.
-13. Final model was built with a smaller train set to see which recessions we can predict.
+4. Running Granger's Causality Test on the differenced data to see which variables 'lag' GDP (which variables have 'predictive causality' on GDP). We decided to start with **merged_data_mscore_wab20231031125447.csv** so we could study the effect of including M-Score and Weighted average beta. Granger causality tests with this data set show 16 variables which lag GDP at a 95% confidence level. These 16 variables were all included in our first VAR model.
+5. Finding the optimal order to build our VAR model: Models with order 1-12 were built. Setting order = 5 gave models with AIC values near the first local minimum, our literature suggests that M-Score lags recession by "5 to 8 quarters" so we used order = 5 for all of our models.
+6. We used VIF and Durbin Watson statistics to decide which of our 16 original variables to remove to make better models. We also did a cointegration to test of our 16 differenced variables with respect to each other and GDP. We found that many of our variables of interest are cointegrated, therefore a VECM model might have been a better choice. But we did not have time to build any VECM models.
+7. Splitting data into train and test sets: We started by trying to forecast the 2008 great recession using models with different sets of variables, then we moved on to the (1981-1982), (1990-1991), 2001, and 2020 recessions. Finally we forecasted GDP beyond the 2023 dataset to see what the future holds for the US economy.
+8. Models were visually compared and in many cases MSE and correlation coefficients were calculated to understand accuracy of forecasts.
+9. Final Visuallizations were done in a Tableau dashboard.
 
 
