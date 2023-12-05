@@ -28,6 +28,8 @@ We ended up with 2 versions of our final data set:
 - **merged_data20231031125447.csv** : (1976 Q3 to 2023 Q1) Contains most features in quarterly date format and runs all the way up to the first quarter of 2023. But it does not include m-score or weighted average beta.
 - **merged_data_mscore_wab20231031125447.csv** : (1977 Q2 2013 Q2) Contains all data in quarterly date format including M-score and weighted average beta. This is the dataset used to make all of our final forecasts.
 
+[Link](https://www.dropbox.com/scl/fi/umx2vjq4a1ppstb2kh1yv/merged_data_mscore_wab20231031125447.csv?rlkey=jmlquopgzrbf9ggtgenja0lmh&dl=0) to final data set used in models. 
+
 
 ## Jupyter Notebooks For Cleaning And Feature Engineering.
 There are jupyter notebooks in the 'Code' folder that we used to transform raw time series data into the clean, quarterly data used to build our final models: 
